@@ -36,3 +36,8 @@
     transform: rotate(360deg);
   }
 }
+
+
+.tile {max-width:200px; min-height: 300px;border: 2px solid blue; background-color: turquoise;}
+
+.tile img {max-width: 100px; min-height: 100px;}
