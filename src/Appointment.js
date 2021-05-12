@@ -1,28 +1,56 @@
-
+'use strict'
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import React, { useState } from "react";
-
-function Appointment(props) {
+function Appointment(props) //passing props
+{
     const [startDate, setStartDate] = useState(new Date());
     const [isOpen, setIsFormOpen] = useState(false);
-    const [isBooked, setBooked] = useState(false);
-    if (isOpen){
+    const [isBooked, setIsBooked] = useState({booked:false,});
+    const sendSMS = () => {
+        async function doSMS() {
+            let payload=
+            {
+            id:props.id,
+            area:props.id,
+            name:document.getElementById("name").value,
+            date:document.getElementById("date").value,
+            time:document.getElementById("time").value,
+            tel:document.getElementById("tel").value, 
+            email:document.getElementById("email").value,
+            msg:document.getElementById("msg").value
+            }
+            console.log (payload)
+
+            let response = await fetch("http://localhost:3001/sms", {
+                method: "POST", body: JSON.stringify(payload), headers: {
+                     'Accept': 'application/json', 'Content-Type': 'application/json' 
+                }                
+            })
+            //fetch = sending request to server 
+    
+            let result = await response.json() 
+        }
+        doSMS()
+    }
+    if (isOpen) {
         return (
             <div>
-                <label>Preferred date:</label><DatePicker selected={startDate} onChange={date => setStartDate(date)} /><br/>
-                <label>Preferred time:</label><input id='time' type='text'></input><br/>
-                <label>Contact email:</label><input id='email' type='text'></input><br/>
-                <label>Contact phone:</label><input id='tel' type='text'></input><br/>
-                <label>Notes/comments:</label><br/><textarea rows="5" cols="40"></textarea><br/>
-                <button onClick={()=>{setIsFormOpen(false);setBooked(true);}}>Submit</button>
+                <label>Name</label><input id='name' type='text'></input><br />
+                <label>Preferred date:</label><DatePicker id='date' selected={startDate} onChange={date => setStartDate(date)} /><br />
+                <label>Preferred time:</label><input id='time' type='text'></input><br />
+                <label>Contact email:</label><input id='email' type='text'></input><br />
+                <label>Contact phone:</label><input id='tel' type='text'></input><br />
+                <label>Notes/comments:</label><br /><textarea id='msg' rows="5" cols="40"></textarea><br />
+                <button onClick={() => { 
+                  setIsFormOpen(false); 
+                  setIsBooked(true); 
+                  sendSMS()}}>Submit</button>
             </div>
         );
-    }   
-    return(
-        <button onClick={()=>setIsFormOpen(true)}>{isBooked?"Booked":"Request viewing"}</button>
+    }
+    return (
+        <button onClick={() => setIsFormOpen(true)}>{isBooked ? "Booked" : "Request viewing"}</button>
     )
 }
 export default Appointment;
-
-  
